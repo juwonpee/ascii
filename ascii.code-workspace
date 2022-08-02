@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"string": "cpp",
+			"vector": "cpp",
+			"hash_map": "cpp",
+			"*.tcc": "cpp",
+			"deque": "cpp",
+			"list": "cpp",
+			"ostream": "cpp"
+		},
+		"C_Cpp.default.includePath": [
+			"/usr/local/include/opencv4/"
+		]
+	}
+}
