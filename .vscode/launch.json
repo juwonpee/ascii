@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/ascii",
-            "args": ["-p", "cat.jpg", "-o", "cat.txt", "-w", "100", "-h", "100"],
+            "args": ["-p", "ohayo.png", "-o", "ohayo.txt", "-w", "100", "-h", "40"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

@@ -25,36 +25,6 @@ char characters[64] =  {
     ';', ':', ',', '\"', '^', '`', '\'', ' ',
 };
 
-int width = 0;
-int height = 0;
-
-void textParser(string outputDirectory) {
-    string outputString;
-    for (int x = 0; x < width; x++) {
-        for (int y = 0; y < height; y++) {
-            outputString += characters[bitMap[x][y] / 4];
-        }
-        outputString += '\n';
-    }
-
-    // Open file
-    ofstream file;
-    file.open(outputDirectory, ios::out | ios::trunc);
-    file << outputString;
-    file.close();
-}
-
-void imageParser(string inputDirectory) {
-	Mat preImage;
-	preImage = imread(inputDirectory, CV_8UC1);
-	Mat image;
-	resize(preImage, image, Size(width, height), INTER_NEAREST);
-	for (int x = 0; x < width; x++) {
-		for (int y = 0; y < height; y++) {
-			bitMap[x][y] = image.at<uchar>(x, y);
-		}
-	}
-}
 
 void cmdHelp() {
     cout << "ASCII Art generator" << endl;
@@ -67,7 +37,9 @@ void cmdHelp() {
 
 int main(int argc, char* argv[]) {
 	string pictureDirectory;
-	string output;
+	string outputDirectory;
+	int width = 0;
+	int height = 0;
 
 	// Parse arguments
 	int opt;
@@ -77,33 +49,53 @@ int main(int argc, char* argv[]) {
 				pictureDirectory = optarg;
 				continue;
 			case 'o':
-				output = optarg;
+				outputDirectory = optarg;
 				continue;
 				
 			// Cant be bothered to swap width and height
 			case 'w':
-				height = stoi(optarg);
+				width = stoi(optarg);
 				continue;
 			case 'h':
-				width = stoi(optarg);
+				height = stoi(optarg);
 				continue;
 		}
 	}
-	if (pictureDirectory == "" || output == "" || width == 0 || height == 0) {
+	if (pictureDirectory == "" || outputDirectory == "" || width == 0 || height == 0) {
 		cmdHelp();
 		return 0;
 	}
 
 	// Parse bitmap into correct size
-	bitMap.resize(width);
-	for (int x = 0; x < width; x++) {
-		bitMap[x].resize(height);
+	bitMap.resize(height);
+	for (int x = 0; x < height; x++) {
+		bitMap[x].resize(width);
 	}
 	
 
-	// Parse image into correct bitmap resolution
-	imageParser(pictureDirectory);
+	Mat image;
+	image = imread(pictureDirectory, CV_8UC1);
+	for (int y = 0; y < height; y++) {
+		int yPixel = image.size().height / height * y;
+		for (int x = 0; x < width; x++) {
+			int xPixel = image.size().width / width * x;
+			bitMap[y][x] = image.at<uchar>(yPixel, xPixel);
+		}
+	}
 
-	// Parse bitmap into text
-	textParser(output);
+	// Parse bitmap into text 
+	string outputString;
+	for (int y = 0; y < bitMap.size(); y++) {
+		for (int x = 0; x < bitMap[y].size(); x++) {
+			outputString += characters[bitMap[y][x] / 4];
+		}
+		outputString += '\n';
+	}
+
+	// Print into file;
+	ofstream file;
+	file.open(outputDirectory, ios::out | ios::trunc);
+	file << outputString;
+	file.close();
+
 }
